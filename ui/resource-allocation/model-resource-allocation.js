@@ -90,6 +90,12 @@ class ResourceAllocationModel {
     get isResourceAssignmentLocked() {
         return this._isResourceAssignmentLocked;
     }
+    get assignedResources() {
+        return this._availableCities.flatMap((city) => city.currentResources);
+    }
+    get hasAnyResourceAssigned() {
+        return this.assignedResources.length > 0;
+    }
     hasSelectedResource() {
         return (this._selectedResource != -1);
     }
@@ -705,6 +711,9 @@ class ResourceAllocationModel {
             return result.Success;
         }
         return false;
+    }
+    unassignAllResources() {
+        this.assignedResources.forEach((resource) => this.unassignResource(resource.value));
     }
     unassignResource(selectedResourceValue) {
         const localPlayerID = GameContext.localPlayerID;
