@@ -41,6 +41,7 @@ class ScreenResourceAllocation extends Panel {
         this.cityActivateListener = this.onCityActivate.bind(this);
         this.resourceMovedListener = this.onResourceMoved.bind(this);
         this.unassignActivateListener = this.onUnassignActivated.bind(this);
+        this.unassignAllResourcesActivateListener = this.onUnassignAllResourcesActivate.bind(this);
         this.onResourceListFocusedListener = this.onResourceListFocused.bind(this);
         this.onBonusResourceListFocusedListener = this.onBonusResourceListFocused.bind(this);
         this.onFactoryResourceListFocusedListener = this.onFactoryResourceListFocused.bind(this);
@@ -281,6 +282,9 @@ class ScreenResourceAllocation extends Panel {
         Databind.classToggle(availableResourcesWrapper, "hidden", `!{{g_ResourceAllocationModel.shouldShowAvailableResources}}`);
         Databind.classToggle(noResourcesOverlay, "hidden", `{{g_ResourceAllocationModel.shouldShowAvailableResources}}`);
         ResourceAllocation.updateResources();
+
+        this._addUnassignAllResourcesButton();
+
         this.updateNavTrayEntries();
         waitForLayout(() => {
             this.updateCityEntriesDisabledState();
@@ -415,6 +419,14 @@ class ScreenResourceAllocation extends Panel {
         }
         parent.appendChild(resourceEntry);
     }
+    buildUnassignAllResourcesButton() {
+        const unassignAllResourcesButton = MustGetElement('.unassign-all-resources');
+        unassignAllResourcesButton.setAttribute("data-audio-group-ref", "pause-menu");
+        unassignAllResourcesButton.setAttribute("data-audio-focus-ref", "data-audio-pause-menu-focus");
+        unassignAllResourcesButton.setAttribute("data-audio-activate-ref", "data-audio-pause-menu-activate");
+        Databind.classToggle(unassignAllResourcesButton, "hidden", `!{{g_ResourceAllocationModel.hasAnyResourceAssigned}}`);
+        unassignAllResourcesButton.addEventListener('action-activate', this.unassignAllResourcesActivateListener);
+    }
     onDetach() {
         this.Root.removeEventListener(InputEngineEventName, this.engineInputListener);
         window.removeEventListener(ActiveDeviceTypeChangedEventName, this.activeDeviceTypeListener, true);
@@ -490,6 +502,21 @@ class ScreenResourceAllocation extends Panel {
         }
         ResourceAllocation.unassignResource(selectedResource);
         this.onResourceMoved();
+    }
+    onUnassignAllResourcesActivate(event) {
+        if (!(event.target instanceof HTMLElement)) {
+            return;
+        }
+        if (ActionHandler.isGamepadActive) {
+            return;
+        }
+
+        ResourceAllocation.unassignAllResources();
+
+        this.updateCityEntriesDisabledState();
+        this.updateAvailableResourceColDisabledState();
+        this.updateAllUnassignActivatable();
+        this.focusCityList();
     }
     onAvailableResourceFocus() {
         if (this.focusedPanel == PanelType.AvailableResources) {
