@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="tbqs-resource-allocation-improvements" version="1"
+	xmlns="ModInfo">
+	<Properties>
+		<Name>TBQ's Resource Allocation Improvements</Name>
+		<Description>QoL updates to the Resource Allocation Screen, including an Unassign All button.</Description>
+		<Authors>TBQ</Authors>
+		<Package>Mod</Package>
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<Dependencies>
+		<Mod id="base-standard" title="LOC_MODULE_BASE_STANDARD_NAME"/>
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="always">
+			<AlwaysMet></AlwaysMet>
+		</Criteria>
+	</ActionCriteria>
+	<ActionGroups>
+		<ActionGroup id="game-tbq-unassign-all-resources-mod" scope="game" criteria="always">
+			<Properties>
+				<LoadOrder>1</LoadOrder>
+			</Properties>
+			<Actions>
+				<UIScripts>
+					<Item>ui/resource-allocation/screen-resource-allocation.js</Item>
+				</UIScripts>
+				<ImportFiles>
+					<Item>ui/resource-allocation/model-resource-allocation.js</Item>
+					<Item>ui/resource-allocation/screen-resource-allocation.html</Item>
+				</ImportFiles>
+			</Actions>
+		</ActionGroup>
+	</ActionGroups>
+</Mod>
