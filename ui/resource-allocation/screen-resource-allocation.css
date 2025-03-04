@@ -81,6 +81,10 @@ screen-resource-allocation .city-list > :last-child {
 	background-image: url("hud_sub_circle_bk");
 }
 
+.unassign-all-button:hover {
+	background-color: #4C473D;
+}
+
 @media (max-height: 1000px) {
 	.empire-resources {
 		margin-bottom: 0.4444444444rem;

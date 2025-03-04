@@ -283,7 +283,7 @@ class ScreenResourceAllocation extends Panel {
         Databind.classToggle(noResourcesOverlay, "hidden", `{{g_ResourceAllocationModel.shouldShowAvailableResources}}`);
         ResourceAllocation.updateResources();
 
-        this._addUnassignAllResourcesButton();
+        this.buildUnassignAllResourcesButton();
 
         this.updateNavTrayEntries();
         waitForLayout(() => {
@@ -424,6 +424,7 @@ class ScreenResourceAllocation extends Panel {
         unassignAllResourcesButton.setAttribute("data-audio-group-ref", "pause-menu");
         unassignAllResourcesButton.setAttribute("data-audio-focus-ref", "data-audio-pause-menu-focus");
         unassignAllResourcesButton.setAttribute("data-audio-activate-ref", "data-audio-pause-menu-activate");
+
         Databind.classToggle(unassignAllResourcesButton, "hidden", `!{{g_ResourceAllocationModel.hasAnyResourceAssigned}}`);
         unassignAllResourcesButton.addEventListener('action-activate', this.unassignAllResourcesActivateListener);
     }

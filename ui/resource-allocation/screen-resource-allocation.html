@@ -36,7 +36,7 @@
 						</p>
 					</div>
 					<div class="flow-row mx-8 flex-auto">
-						<div class="city-header-container grow h-full">
+						<div class="city-header-container h-full">
 							<p class="city-column-header relative flex justify-start font-title text-base uppercase text-secondary"
 							   data-l10n-id="LOC_UI_RESOURCE_ALLOCATION_SETTLEMENTS">
 							</p>
@@ -44,10 +44,12 @@
 							   data-l10n-id="LOC_UI_RESOURCE_ALLOCATION_SELECT_SETTLEMENT">
 							</p>
 						</div>
-						<fxs-activatable class="unassign-all-resources font-title text-base uppercase text-secondary">
-							<div class="all-resource-actions city-idle-overlay flex justify-end bg-red-200 items-center pt-3 relative flex max-w-full max-h-full px-10 pb-8 group-hover:bg-secondary">Unassign All Resources</div>
-						</fxs-activatable>
-						<fxs-hslot class="city-filter-container grow h-full justify-end items-end">
+						<div class="flex grow w-100 justify-end mr-10">
+							<fxs-activatable class="unassign-all-resources font-title text-base uppercase text-secondary">
+								<div class="city-idle-overlay unassign-all-button flex justify-end items-center relative flex max-w-full max-h-full px-6 py-2">Unassign All Resources</div>
+							</fxs-activatable>
+						</div>
+						<fxs-hslot class="city-filter-container h-full justify-end items-end">
 							<div class="relative flex items-end mr-3">
 								<p class="font-body text-xs mb-1" data-l10n-id="LOC_UI_RESOURCE_ALLOCATION_SHOW_YIELDS"
 								   selected="true"></p>
