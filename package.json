@@ -12,6 +12,9 @@
     "url": "https://github.com/tpadjen/civ-vii-resource-allocation/issues"
   },
   "homepage": "https://github.com/tpadjen/civ-vii-resource-allocation#readme",
+  "scripts": {
+    "release": "release-it"
+  },
   "dependencies": {
     "agent-base": "^7.1.3",
     "ansi-align": "^3.0.1",
