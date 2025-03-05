@@ -185,10 +185,6 @@ class ScreenResourceAllocation extends Panel {
             entryName.classList.add('settlement-name-text', 'font-title', 'text-sm', 'uppercase');
             Databind.locText(entryName, 'entry.name');
             cityTopContainer.appendChild(entryName);
-            const settlementTypeName = document.createElement('p');
-            settlementTypeName.classList.add('settlement-type-text', 'font-title', 'text-sm', 'uppercase', 'ml-1');
-            settlementTypeName.setAttribute('data-bind-attr-data-l10n-id', '{{entry.settlementTypeName}}');
-            cityTopContainer.appendChild(settlementTypeName);
             cityInnerContainer.appendChild(cityTopContainer);
             // Build City Resource Yields
             const yieldBarRow = document.createElement('div');
