@@ -55,13 +55,13 @@ class ResourceAllocationModel {
         return this._allAvailableResources;
     }
     get availableResources() {
-        return this._availableResources;
+        return this._availableResources.sort(this.resourceComparator);
     }
     get availableBonusResources() {
-        return this._availableBonusResources;
+        return this._availableBonusResources.sort(this.resourceComparator);
     }
     get availableFactoryResources() {
-        return this._availableFactoryResources;
+        return this._availableFactoryResources.sort(this.resourceComparator);
     }
     get treasureResources() {
         return this._treasureResources;
@@ -101,6 +101,10 @@ class ResourceAllocationModel {
     }
     hasQueuedResources() {
         return (this.queuedResources.size > 0);
+    }
+    resourceComparator(a, b) {
+        const typeComparison = b.classType.localeCompare(a.classType);
+        return typeComparison === 0 ? a.bonus.localeCompare(b.bonus) : typeComparison;
     }
     update() {
         // If the game is in an environment where the player cannot interact (e.g., auto-play); early out.
@@ -448,10 +452,10 @@ class ResourceAllocationModel {
                     const newCityEntry = {
                         name: city.name,
                         id: city.id,
-                        currentResources: currentResources,
-                        visibleResources: visibleResources,
-                        treasureResources: treasureResources,
-                        factoryResources: factoryResources,
+                        currentResources: currentResources.sort(this.resourceComparator),
+                        visibleResources: visibleResources.sort(this.resourceComparator),
+                        treasureResources: treasureResources.sort(this.resourceComparator),
+                        factoryResources: factoryResources.sort(this.resourceComparator),
                         queuedResources: [],
                         emptySlots: emptySlots,
                         settlementType: settlementTypeString,

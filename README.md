@@ -4,6 +4,7 @@ A mod to improve the Resources screen in Civ VII.
 
 ## Features:
 * Remove all assigned resources with the click of a button
+* Keep all resource lists sorted
 
 
 ## Installation Instructions
