@@ -5,7 +5,7 @@ A mod to improve the Resources screen in Civ VII.
 ## Features:
 * Remove all assigned resources from all settlements with the click of a button
 * Keep all resource lists sorted
-* Middle click an assigned resource to immediately unassign it from a settlement (if possible)
+* Middle click an assigned resource to immediately unassign it from a settlement, if possible
 
 
 ## Installation Instructions
@@ -17,5 +17,5 @@ A mod to improve the Resources screen in Civ VII.
 
 ## Known Issues
 * Unassigning Resources
-    * Camels are currently removed separately from other resources in a second pass because the engine refuses to remove them if there are still other resources filling the spots that were added to the city by the camel.
+    * Camels are currently removed separately from other resources in a second pass during a mass unassignment because the engine refuses to remove them if there are still other resources filling the spots that were added to the city by the camel.
     * Unassigning a ton of resources may cause a short lag.
