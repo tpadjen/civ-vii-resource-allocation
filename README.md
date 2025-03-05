@@ -9,9 +9,11 @@ A mod to improve the Resources screen in Civ VII.
     * Within a category (city or town) sort by
         * Larger resource capacity
         * Then alphabetically by localized city name
-        * Razed settlements always come last in their group 
+        * Razed settlements always come last in their group
 * Keep all resource lists sorted too
 * Middle click an assigned resource to immediately unassign it from a settlement, if possible
+* Add a Show Cities toggle next to Show Towns
+* Remove settlement type ('Capital', 'City', and 'Town') appended to name. There's already an icon 
 
 
 ## Installation Instructions
