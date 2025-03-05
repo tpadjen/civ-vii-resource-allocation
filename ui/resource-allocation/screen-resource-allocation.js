@@ -425,7 +425,7 @@ class ScreenResourceAllocation extends Panel {
         unassignAllResourcesButton.setAttribute("data-audio-focus-ref", "data-audio-pause-menu-focus");
         unassignAllResourcesButton.setAttribute("data-audio-activate-ref", "data-audio-pause-menu-activate");
 
-        Databind.classToggle(unassignAllResourcesButton, "hidden", `!{{g_ResourceAllocationModel.hasAnyResourceAssigned}}`);
+        Databind.classToggle(unassignAllResourcesButton, "hidden", `!{{g_ResourceAllocationModel.hasAnyResourceAssigned}} || {{g_ResourceAllocationModel.isResourceAssignmentLocked}}`);
         unassignAllResourcesButton.addEventListener('action-activate', this.unassignAllResourcesActivateListener);
     }
     onDetach() {
