@@ -17,8 +17,8 @@
     "@j-ulrich/release-it-regex-bumper": {
       "out": {
         "file": "TBQ's Resource Allocation Improvements.modinfo",
-        "search": "tbqs-resource-allocation-improvements\" version=\"{{[^\"]+}}\"",
-        "replace": "tbqs-resource-allocation-improvements\" version=\"{{versionWithoutPrerelease}}\""
+        "search": "version=\"{{semver}}\"",
+        "replace": "version=\"{{versionWithoutPrerelease}}\""
       }
     }
   }
