@@ -3,8 +3,9 @@
 A mod to improve the Resources screen in Civ VII.
 
 ## Features:
-* Remove all assigned resources with the click of a button
+* Remove all assigned resources from all settlements with the click of a button
 * Keep all resource lists sorted
+* Middle click an assigned resource to immediately unassign it from a settlement (if possible)
 
 
 ## Installation Instructions

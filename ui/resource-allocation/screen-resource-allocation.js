@@ -38,6 +38,7 @@ class ScreenResourceAllocation extends Panel {
         this.cityResourceContainerFocusListener = this.onCityResourceContainerFocus.bind(this);
         this.availableResourceActivateListener = this.onAvailableResourceActivate.bind(this);
         this.assignedResourceActivateListener = this.onAssignedResourceActivate.bind(this);
+        this.assignedResourceUnassignListener = this.onAssignedResourceUnassign.bind(this);
         this.cityActivateListener = this.onCityActivate.bind(this);
         this.resourceMovedListener = this.onResourceMoved.bind(this);
         this.unassignActivateListener = this.onUnassignActivated.bind(this);
@@ -364,6 +365,7 @@ class ScreenResourceAllocation extends Panel {
             resourceActivatable.addEventListener('focus', this.assignedResourceFocusListener);
             resourceActivatable.addEventListener(InputEngineEventName, this.assignedResourceEngineInputListener);
             resourceActivatable.addEventListener('action-activate', this.assignedResourceActivateListener);
+            resourceActivatable.addEventListener('auxclick', this.assignedResourceUnassignListener);
             const icon = document.createElement('fxs-icon');
             icon.classList.add(iconClass);
             icon.classList.add('resource-allocation-icon', 'size-16', 'm-1', 'relative');
@@ -617,6 +619,32 @@ class ScreenResourceAllocation extends Panel {
         }
         const resourceValue = parseInt(resourceValueAttribute);
         ResourceAllocation.selectAssignedResource(resourceValue, resourceClassAttribute);
+        this.updateCityEntriesDisabledState();
+        this.updateAvailableResourceColDisabledState();
+        this.updateAllUnassignActivatable();
+        this.focusCityList();
+    }
+    onAssignedResourceUnassign(event) {
+        if (!(event.target instanceof HTMLElement)) {
+            return;
+        }
+        if (ActionHandler.isGamepadActive) {
+            return;
+        }
+        const resourceValueAttribute = event.target.getAttribute('data-resource-value');
+        const resourceClassAttribute = event.target.getAttribute('data-resource-class');
+        const assignmentLocked = event.target.getAttribute('data-assignment-locked');
+        const isInTradeNetwork = event.target.getAttribute('data-in-trade-network');
+        if (!resourceValueAttribute || !resourceClassAttribute || !assignmentLocked || !isInTradeNetwork) {
+            console.error('screen-resource-allocation: onAssignedResourceActivate(): Failed to get attributes for resource!');
+            return;
+        }
+        if (assignmentLocked == 'true' || isInTradeNetwork != 'true') {
+            return;
+        }
+
+        const resourceValue = parseInt(resourceValueAttribute);
+        ResourceAllocation.unassignResource(resourceValue);
         this.updateCityEntriesDisabledState();
         this.updateAvailableResourceColDisabledState();
         this.updateAllUnassignActivatable();
