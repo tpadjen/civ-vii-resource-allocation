@@ -58,11 +58,20 @@ class ScreenResourceAllocation extends Panel {
             });
         };
         this.onShowTownsChanged = (e) => {
+            const showTowns = e.detail.value;
+            this.Root.querySelectorAll(".city-outer").forEach(cityEntry => {
+                const settlementType = cityEntry.getAttribute("settlement-type");
+                const isTown = settlementType === "Town";
+                if (isTown) cityEntry.classList.toggle("hidden", !showTowns);
+                
+            });
+        };
+        this.onShowCitiesChanged = (e) => {
             const showCities = e.detail.value;
             this.Root.querySelectorAll(".city-outer").forEach(cityEntry => {
                 const settlementType = cityEntry.getAttribute("settlement-type");
-                const isCity = settlementType == "City" || settlementType == "Capital";
-                cityEntry.classList.toggle("hidden", !showCities && !isCity);
+                const isCity = settlementType !== "Town";
+                if (isCity) cityEntry.classList.toggle("hidden", !showCities);
             });
         };
         this.onShowFactoriesChanged = (e) => {
@@ -88,7 +97,10 @@ class ScreenResourceAllocation extends Panel {
         showYields.addEventListener('component-value-changed', this.onShowYieldsChanged);
         const showCities = MustGetElement(".show-cities", this.Root);
         showCities.setAttribute("selected", "true");
-        showCities.addEventListener('component-value-changed', this.onShowTownsChanged);
+        showCities.addEventListener('component-value-changed', this.onShowCitiesChanged);
+        const showTowns = MustGetElement(".show-towns", this.Root);
+        showTowns.setAttribute("selected", "true");
+        showTowns.addEventListener('component-value-changed', this.onShowTownsChanged);
         const showFactories = MustGetElement(".show-factories", this.Root);
         showFactories.setAttribute("selected", "true");
         showFactories.addEventListener('component-value-changed', this.onShowFactoriesChanged);

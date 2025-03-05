@@ -22,6 +22,9 @@
 				<LoadOrder>1</LoadOrder>
 			</Properties>
 			<Actions>
+				<UpdateText>
+					<Item>text/localization.sql</Item>
+				</UpdateText>
 				<UIScripts>
 					<Item>ui/resource-allocation/screen-resource-allocation.js</Item>
 				</UIScripts>
