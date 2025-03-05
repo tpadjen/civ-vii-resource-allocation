@@ -713,7 +713,21 @@ class ResourceAllocationModel {
         return false;
     }
     unassignAllResources() {
-        this.assignedResources.forEach((resource) => this.unassignResource(resource.value));
+        // Must remove non-camels first
+        this.assignedResources
+            .filter((resource) => resource.type !== 'RESOURCE_CAMELS')
+            .forEach((resource) => this.unassignResource(resource.value));
+
+        const camelsInterval = setInterval(() => {
+            // wait for all of the non-camel removals to be processed
+            if (this.assignedResources.some((resource) => resource.type !== 'RESOURCE_CAMELS'))
+                return;
+
+            // Then the camels can go too
+            this.assignedResources.forEach((resource) => this.unassignResource(resource.value));
+            clearInterval(camelsInterval);
+        }, 10);
+        
     }
     unassignResource(selectedResourceValue) {
         const localPlayerID = GameContext.localPlayerID;
