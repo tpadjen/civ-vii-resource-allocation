@@ -14,13 +14,14 @@
     "after:bump": "npx auto-changelog"
   },
   "plugins": {
-    "@devsaur/release-it-bump-version-code": {
-      "versionCodes": [
-        {
-          "file": "TBQ's Resource Allocation Improvements.modinfo",
-          "search": "(?<=tbqs-resource-allocation-improvements\" version=\")[^\"]*"
-        }
-      ]
+    "@j-ulrich/release-it-regex-bumper": {
+        "out": [
+            "TBQ's Resource Allocation Improvements.modinfo",
+            {
+                "search": "(?<=tbqs-resource-allocation-improvements\" version=\")[^\"]*",
+                "replace": "{{versionWithoutPrerelease}}"
+            }
+        ]
     }
   }
 }

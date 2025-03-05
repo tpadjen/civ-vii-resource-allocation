@@ -228,7 +228,7 @@
     "yoctocolors-cjs": "^2.1.2"
   },
   "devDependencies": {
-    "@devsaur/release-it-bump-version-code": "^0.2.1",
+    "@j-ulrich/release-it-regex-bumper": "^5.2.0",
     "release-it": "^18.1.2"
   }
 }
