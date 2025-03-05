@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+  "github": {
+    "release": true
+  },
+  "git": {
+    "requireBranch": "main"
+  },
+  "hooks": {
+    "after:bump": "npx auto-changelog"
+  },
+  "plugins": {
+    "@devsaur/release-it-bump-version-code": {
+      "versionCodes": [
+        {
+          "file": "TBQ's Resource Allocation Improvements.modinfo",
+          "search": "(?<=tbqs-resource-allocation-improvements\" version=\")[^\"]*"
+        }
+      ]
+    }
+  }
+}
