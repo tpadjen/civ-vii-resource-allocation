@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="tbqs-resource-allocation-improvements" version="1"
+<Mod id="tbqs-resource-allocation-improvements" version="0.9"
 	xmlns="ModInfo">
 	<Properties>
 		<Name>TBQ's Resource Allocation Improvements</Name>
@@ -29,6 +29,7 @@
 					<Item>ui/resource-allocation/model-resource-allocation.js</Item>
 					<Item>ui/resource-allocation/screen-resource-allocation.html</Item>
 					<Item>ui/resource-allocation/screen-resource-allocation.css</Item>
+					<Item>ui/resource-allocation/utilities.js</Item>
 				</ImportFiles>
 			</Actions>
 		</ActionGroup>

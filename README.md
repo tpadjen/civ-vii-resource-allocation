@@ -4,7 +4,13 @@ A mod to improve the Resources screen in Civ VII.
 
 ## Features:
 * Remove all assigned resources from all settlements with the click of a button
-* Keep all resource lists sorted
+* Autosort Settlements
+    * Capital first, then cities, finally towns
+    * Within a category (city or town) sort by
+        * Larger resource capacity
+        * Then alphabetically by localized city name
+        * Razed settlements always come last in their group 
+* Keep all resource lists sorted too
 * Middle click an assigned resource to immediately unassign it from a settlement, if possible
 
 
