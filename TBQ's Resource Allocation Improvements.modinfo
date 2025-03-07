@@ -26,10 +26,10 @@
 					<Item>text/localization.sql</Item>
 				</UpdateText>
 				<UIScripts>
+					<Item>mod/unassign.js</Item>
 					<Item>ui/resource-allocation/screen-resource-allocation.js</Item>
 				</UIScripts>
 				<ImportFiles>
-					<Item>ui/resource-allocation/model-resource-allocation.js</Item>
 					<Item>ui/resource-allocation/screen-resource-allocation.html</Item>
 					<Item>ui/resource-allocation/screen-resource-allocation.css</Item>
 				</ImportFiles>
