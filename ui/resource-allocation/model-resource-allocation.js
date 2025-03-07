@@ -7,7 +7,6 @@ import CityYields from '/base-standard/ui/utilities/utilities-city-yields.js';
 import ActionHandler from '/core/ui/input/action-handler.js';
 import { ComponentID } from '/core/ui/utilities/utilities-component-id.js';
 import UpdateGate from '/core/ui/utilities/utilities-update-gate.js';
-import { localizeAndCompare } from '/base-standard/ui/resource-allocation/utilities.js';
 class ResourceAllocationModel {
     constructor() {
         this._selectedResource = -1;
@@ -56,19 +55,19 @@ class ResourceAllocationModel {
         return this._allAvailableResources;
     }
     get availableResources() {
-        return this._availableResources.sort(this.resourceComparator);
+        return this._availableResources;
     }
     get availableBonusResources() {
-        return this._availableBonusResources.sort(this.resourceComparator);
+        return this._availableBonusResources;
     }
     get availableFactoryResources() {
-        return this._availableFactoryResources.sort(this.resourceComparator);
+        return this._availableFactoryResources;
     }
     get treasureResources() {
         return this._treasureResources;
     }
     get availableCities() {
-        return this._availableCities.sort(this.cityComparator);
+        return this._availableCities;
     }
     get selectedCityResources() {
         return this._selectedCityResources;
@@ -97,33 +96,11 @@ class ResourceAllocationModel {
     get hasAnyResourceAssigned() {
         return this.assignedResources.length > 0;
     }
-    get cityComparator() {
-        return this._cityComparator || ((a, b) => {
-            const settlementComparison = a.settlementType.localeCompare(b.settlementType);
-            if (settlementComparison !== 0) return settlementComparison;
-        
-            if (a.isBeingRazed && b.isBeingRazed) return localizeAndCompare(a.name, b.name);
-            if (a.isBeingRazed) return 1;
-            if (b.isBeingRazed) return -1;
-        
-            const resourceCapComparison = b.resourceCap - a.resourceCap;
-            if (resourceCapComparison !== 0) return resourceCapComparison;
-            
-            return localizeAndCompare(a.name, b.name);
-        });
-    }
-    set cityComparator(comparator) {
-        this._cityComparator = comparator;
-    }
     hasSelectedResource() {
         return (this._selectedResource != -1);
     }
     hasQueuedResources() {
         return (this.queuedResources.size > 0);
-    }
-    resourceComparator(a, b) {
-        const typeComparison = b.classType.localeCompare(a.classType);
-        return typeComparison === 0 ? a.bonus.localeCompare(b.bonus) : typeComparison;
     }
     update() {
         // If the game is in an environment where the player cannot interact (e.g., auto-play); early out.
@@ -471,10 +448,10 @@ class ResourceAllocationModel {
                     const newCityEntry = {
                         name: city.name,
                         id: city.id,
-                        currentResources: currentResources.sort(this.resourceComparator),
-                        visibleResources: visibleResources.sort(this.resourceComparator),
-                        treasureResources: treasureResources.sort(this.resourceComparator),
-                        factoryResources: factoryResources.sort(this.resourceComparator),
+                        currentResources: currentResources,
+                        visibleResources: visibleResources,
+                        treasureResources: treasureResources,
+                        factoryResources: factoryResources,
                         queuedResources: [],
                         emptySlots: emptySlots,
                         settlementType: settlementTypeString,
