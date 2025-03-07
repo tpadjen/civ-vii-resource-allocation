@@ -1,3 +1,3 @@
-export function localizeAndCompare (a, b) {
-    return engine.translate(a).localeCompare(engine.translate(b));
+export function localizeAndCompare(a, b) {
+    return Locale.compose(a).localeCompare(Locale.compose(b));
 }
