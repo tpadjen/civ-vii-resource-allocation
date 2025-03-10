@@ -26,12 +26,13 @@
 					<Item>text/localization.sql</Item>
 				</UpdateText>
 				<UIScripts>
-					<Item>mod/unassign.js</Item>
-					<Item>ui/resource-allocation/screen-resource-allocation.js</Item>
+					<Item>mod/unassign-all/screens/resource-allocation/decorator.js</Item>
+					<Item>mod/unassign-all/button/unassign-all-resources-button.js</Item>
+					<Item>mod/unassign-all/unassign-all.js</Item>
 				</UIScripts>
 				<ImportFiles>
-					<Item>ui/resource-allocation/screen-resource-allocation.html</Item>
-					<Item>ui/resource-allocation/screen-resource-allocation.css</Item>
+					<Item>mod/unassign-all/events/all-resources-unassigned.js</Item>
+					<Item>mod/unassign-all/button/unassign-all-resources-button.css</Item>
 				</ImportFiles>
 			</Actions>
 		</ActionGroup>
