@@ -41,7 +41,7 @@
 			</Properties>
 			<Actions>
 				<UIScripts>
-					<Item>mod/sort.js</Item>
+					<Item>mod/sort/sort.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>
