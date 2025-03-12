@@ -32,10 +32,50 @@ const initialize = () => {
         }, 10);
     }
 
+    proto.assignResourceToCity = function(resource, cityID) {
+        const location = GameplayMap.getLocationFromIndex(resource.value);
+        const args = { Location: location, City: cityID.id };
+        const result = Game.PlayerOperations.canStart(GameContext.localPlayerID, PlayerOperationTypes.ASSIGN_RESOURCE, args, false);
+        if (result.Success) {
+            Game.PlayerOperations.sendRequest(GameContext.localPlayerID, PlayerOperationTypes.ASSIGN_RESOURCE, args);
+        }
+    }
+
+    proto.hasFactoryResourceSelected = function() {
+        if (!this._selectedResource) return false;
+
+        const factoryResource = this.availableFactoryResources.find(
+            resource => resource.value == this.selectedResource
+        );
+
+        return factoryResource && factoryResource.classType === 'RESOURCECLASS_FACTORY';
+    }
+
+    proto.fillCityWithFactoryResource = function(cityID) {
+        const city = this.availableCities.find((city => city.id.id == cityID));
+        if (!city) return false;
+
+        const factoryResource = this.availableFactoryResources.find(
+            resource => resource.value == this.selectedResource
+        );
+        if (!factoryResource || factoryResource.classType !== 'RESOURCECLASS_FACTORY') return false;
+
+        const matchingAvailableFactoryResources = this.availableFactoryResources.filter(
+            resource => resource.name === factoryResource.name
+        );
+        const numSlotsToFill = Math.min(matchingAvailableFactoryResources.length, city.emptySlots.length);
+        const resourcesToAssign = matchingAvailableFactoryResources.slice(0, numSlotsToFill);
+        
+        resourcesToAssign.forEach(resource => this.assignResourceToCity(resource, city.id));
+
+        this.clearSelectedResource();
+        return true;
+    }
+
     proto.unassignAllResourceInstancesFromCity = function(cityID, resourceValue) {
         const city = this.availableCities.find((city => city.id.id == cityID));
         if (!city) return;
-        const factoryResource = city.currentResources.find(resource => resource.value == resourceValue);
+        const factoryResource = city.currentResources.find(resource => resource.value == resourceValue);      
         if (!factoryResource) return;
 
         const matchingAssignedFactoryResources = 

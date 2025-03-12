@@ -8,6 +8,7 @@ class ScreenResourceAllocationDecorator {
         this.screen = val;
         this.assignedResourceUnassignListener = this.onAssignedResourceUnassign.bind(this);
         this.allResourcesUnassignedListener = this.onAllResourcesUnassigned.bind(this);
+        this.factoryResourceAssignedListener = this.onFactoryResourceAssigned.bind(this);
         this.factoryResourceUnassignedListener = this.onFactoryResourceUnassigned.bind(this);
     }
 
@@ -127,8 +128,33 @@ class ScreenResourceAllocationDecorator {
     }
 
     enhanceFactorySlots() {
-        const emptyFactorySlots = MustGetElements('.city-factory-resource-container > fxs-activatable');
-        emptyFactorySlots.forEach(slot => slot.addEventListener('auxclick', this.factoryResourceUnassignedListener));
+        const factorySlots = MustGetElements('.city-factory-resource-container > fxs-activatable');
+        
+        const containers = MustGetElements('.city-factory-resource-container');
+        containers.forEach(container => {
+            const emptySlot = MustGetElement('fxs-activatable', container); 
+            emptySlot.setAttribute('data-bind-class-toggle', `bg-accent-4:{{g_ResourceAllocationModel}}.hasFactoryResourceSelected();opacity-70:(!!{{g_ResourceAllocationModel.selectedResourceClass}}&&!{{g_ResourceAllocationModel}}.hasfactoryResourceSelected())`);
+        });
+        
+        factorySlots.forEach(slot => slot.removeEventListener('action-activate', this.screen.cityActivateListener));
+        factorySlots.forEach(slot => slot.addEventListener('action-activate', this.factoryResourceAssignedListener));
+        
+        factorySlots.forEach(slot => slot.addEventListener('auxclick', this.factoryResourceUnassignedListener));
+    }
+
+    onFactoryResourceAssigned(event) {
+        const resourceValue = event.target.getAttribute('data-resource-value');
+        if (!resourceValue) { // empty factory slot
+            if (ResourceAllocation.hasSelectedResource()) {
+                const cityID = event.target.parentElement?.getAttribute('data-city-id');
+                const isSuccess = ResourceAllocation.fillCityWithFactoryResource(cityID);
+                if (isSuccess) return;
+            }
+        };
+
+        // fallback to default behavior
+        this.screen.onCityActivate(event);
+        return;
     }
 
     onFactoryResourceUnassigned(event) {
