@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="tbqs-resource-allocation-improvements" version="0.2.0"
+<Mod id="tbqs-resource-allocation-improvements" version="0.3.0"
 	xmlns="ModInfo">
 	<Properties>
 		<Name>TBQ's Resource Allocation Improvements</Name>
 		<Description>QoL updates to the Resource Allocation Screen, including an Unassign All button.</Description>
 		<Authors>TBQ</Authors>
 		<Package>Mod</Package>
-		<Version>0.2.0</Version>
+		<Version>0.3.0</Version>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
 	<Dependencies>
