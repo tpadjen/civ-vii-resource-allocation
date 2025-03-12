@@ -8,6 +8,7 @@ class ScreenResourceAllocationDecorator {
         this.screen = val;
         this.assignedResourceUnassignListener = this.onAssignedResourceUnassign.bind(this);
         this.allResourcesUnassignedListener = this.onAllResourcesUnassigned.bind(this);
+        this.factoryResourceUnassignedListener = this.onFactoryResourceUnassigned.bind(this);
     }
 
     beforeAttach() { }
@@ -17,6 +18,7 @@ class ScreenResourceAllocationDecorator {
         this.removeSettlementTypeNames();
         this.setupQuickResourceUnassignment();
         this.addUnassignAllButton();
+        this.enhanceFactorySlots();
     }
 
     beforeDetach() { }
@@ -122,6 +124,20 @@ class ScreenResourceAllocationDecorator {
         this.screen.updateAvailableResourceColDisabledState();
         this.screen.updateAllUnassignActivatable();
         this.screen.focusCityList();
+    }
+
+    enhanceFactorySlots() {
+        const emptyFactorySlots = MustGetElements('.city-factory-resource-container > fxs-activatable');
+        emptyFactorySlots.forEach(slot => slot.addEventListener('auxclick', this.factoryResourceUnassignedListener));
+    }
+
+    onFactoryResourceUnassigned(event) {
+        const resourceValue = event.target.getAttribute('data-resource-value');
+        const resourceClass = event.target.getAttribute('data-resource-class');
+        if (!resourceValue || resourceClass !== 'RESOURCECLASS_FACTORY') return;
+
+        const cityID = event.target.parentElement?.getAttribute('data-city-id');
+        ResourceAllocation.unassignAllResourceInstancesFromCity(cityID, resourceValue);
     }
 }
 

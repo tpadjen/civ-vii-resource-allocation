@@ -31,6 +31,19 @@ const initialize = () => {
             clearInterval(camelsInterval);
         }, 10);
     }
+
+    proto.unassignAllResourceInstancesFromCity = function(cityID, resourceValue) {
+        const city = this.availableCities.find((city => city.id.id == cityID));
+        if (!city) return;
+        const factoryResource = city.currentResources.find(resource => resource.value == resourceValue);
+        if (!factoryResource) return;
+
+        const matchingAssignedFactoryResources = 
+            city.currentResources.filter(resource => 
+                resource.name === factoryResource.name && resource.value !== factoryResource.value
+            );
+        matchingAssignedFactoryResources.forEach((resource) => this.unassignResource(resource.value));
+    }
 };
 engine.whenReady.then(() => {
     initialize();
