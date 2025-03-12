@@ -8,10 +8,11 @@
     "publish": false
   },
   "git": {
-    "requireBranch": "main"
+    "requireBranch": "main",
+    "changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/main/templates/changelog-compact.hbs"
   },
   "hooks": {
-    "after:bump": "npx auto-changelog"
+    "after:bump": "npx auto-changelog -p"
   },
   "plugins": {
     "@j-ulrich/release-it-regex-bumper": {
