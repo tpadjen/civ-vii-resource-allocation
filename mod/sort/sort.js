@@ -17,7 +17,7 @@ const initialize = () => {
                 const resourceCapComparison = b.resourceCap - a.resourceCap;
                 if (resourceCapComparison !== 0) return resourceCapComparison;
                 
-                return Locale.compose(a.name).localeCompare(Locale.compose(b.name));
+                return Locale.compose(a.name).toUpperCase().localeCompare(Locale.compose(b.name).toUpperCase());
             });
         },
         set: function settlementComparator(comparator) {
