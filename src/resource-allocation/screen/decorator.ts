@@ -204,9 +204,15 @@ class ScreenResourceAllocationDecorator {
     }
 
     enhanceFactorySlots() {
-        const factorySlots = MustGetElements(
-            '.city-factory-resource-container > fxs-activatable'
-        )
+        let factorySlots: NodeListOf<HTMLElement>
+        try {
+            factorySlots = MustGetElements(
+                '.city-factory-resource-container > fxs-activatable'
+            )
+        } catch (error) {
+            // no factory slots found
+            return
+        }
 
         const containers = MustGetElements('.city-factory-resource-container')
         containers.forEach((container: HTMLElement) => {
