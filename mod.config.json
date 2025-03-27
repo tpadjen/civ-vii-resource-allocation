@@ -1,0 +1,25 @@
+{
+    "name": "tbq-resource-allocation-improvements",
+    "id": "tbq-rai",
+    "visibleName": "TBQ's Resource Allocation Improvements",
+    "description": "QoL updates to the Resource Allocation Screen, including an Unassign All button.",
+    "authors": ["TBQ"],
+    "entries": {
+        "sorting": "sorting.ts",
+        "resource-allocation": "resource-allocation.ts"
+    },
+    "replacements": {},
+    "texts": ["localization.sql"],
+    "actionGroups": {
+        "resource-allocation": {
+            "scope": "game",
+            "entries": ["resource-allocation"],
+            "loadOrder": 98
+        },
+        "sorting": {
+            "scope": "game",
+            "entries": ["sorting"],
+            "loadOrder": 99
+        }
+    }
+}

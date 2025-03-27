@@ -1,0 +1,13 @@
+# Build output
+build/
+utils/**/*.js
+utils/**/*.js.map
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.js.map
+*.d.ts
+
+package.json

@@ -1,33 +1,18 @@
 {
-  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
-  "github": {
-    "release": true
-  },
-  "npm": {
-    "release": false,
-    "publish": false
-  },
-  "git": {
-    "requireBranch": "main",
-    "changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/main/templates/changelog-compact.hbs"
-  },
-  "hooks": {
-    "after:bump": "npx auto-changelog -p"
-  },
-  "plugins": {
-    "@j-ulrich/release-it-regex-bumper": {
-      "out": [
-        {
-          "file": "TBQ's Resource Allocation Improvements.modinfo",
-          "search": "tbqs-resource-allocation-improvements\" version=\"{{semver}}\"",
-          "replace": "tbqs-resource-allocation-improvements\" version=\"{{versionWithoutPrerelease}}\""
-        },
-        {
-          "file": "TBQ's Resource Allocation Improvements.modinfo",
-          "search": "<Version>{{semver}}",
-          "replace": "<Version>{{versionWithoutPrerelease}}"
-        }
-      ]
+    "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+    "github": {
+        "release": true,
+        "assets": "bun utils/release/get-assets.ts"
+    },
+    "npm": {
+        "release": false,
+        "publish": false
+    },
+    "git": {
+        "requireBranch": "main",
+        "changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/release-it/release-it/main/templates/changelog-compact.hbs"
+    },
+    "hooks": {
+        "after:bump": ["npx auto-changelog -p", "bun bundle", "bun archive"]
     }
-  }
 }
