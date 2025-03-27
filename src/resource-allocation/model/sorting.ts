@@ -16,10 +16,21 @@ export function improveResourceSorting() {
                     )
                     if (settlementComparison !== 0) return settlementComparison
 
-                    if (a.isBeingRazed && b.isBeingRazed)
-                        return Locale.compose(a.name).localeCompare(
-                            Locale.compose(b.name)
+                    const lowercaseNameComparison = Locale.compose(a.name)
+                        .toLocaleLowerCase()
+                        .localeCompare(
+                            Locale.compose(b.name).toLocaleLowerCase()
                         )
+                    const nameComparison = Locale.compose(a.name).localeCompare(
+                        Locale.compose(b.name)
+                    )
+
+                    if (a.isBeingRazed && b.isBeingRazed) {
+                        if (lowercaseNameComparison !== 0)
+                            return lowercaseNameComparison
+                        return nameComparison
+                    }
+
                     if (a.isBeingRazed) return 1
                     if (b.isBeingRazed) return -1
 
@@ -27,9 +38,9 @@ export function improveResourceSorting() {
                     if (resourceCapComparison !== 0)
                         return resourceCapComparison
 
-                    return Locale.compose(a.name).localeCompare(
-                        Locale.compose(b.name)
-                    )
+                    if (lowercaseNameComparison !== 0)
+                        return lowercaseNameComparison
+                    return nameComparison
                 })
             )
         },
