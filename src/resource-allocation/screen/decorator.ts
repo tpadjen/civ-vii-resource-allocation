@@ -18,7 +18,11 @@ class ScreenResourceAllocationDecorator {
     private screen: ScreenResourceAllocationType
     private onShowTownsChanged: (event: any) => void
     private onShowCitiesChanged: (event: any) => void
+    private onShowFactoriesChanged: (event: any) => void
     Root: ComponentRoot<Component>
+    showingTowns: boolean = true
+    showingCities: boolean = true
+    showingOnlyFactories: boolean = false
 
     constructor(val: ScreenResourceAllocationType) {
         this.screen = val
@@ -36,7 +40,9 @@ class ScreenResourceAllocationDecorator {
     beforeAttach() {}
 
     afterAttach() {
-        this.addCitiesFilter()
+        this.setupCityFilter()
+        this.setupTownFilter()
+        this.setupFactoryFilter()
         this.removeSettlementTypeNames()
         this.setupQuickResourceUnassignment()
         this.addUnassignAllButton()
@@ -54,29 +60,55 @@ class ScreenResourceAllocationDecorator {
 
     onAttributeChanged(name: string, prev: string, next: string) {}
 
-    addCitiesFilter() {
-        this.onShowTownsChanged = (event: CustomEvent<{ value: boolean }>) => {
-            const showTowns = event.detail.value
-            this.Root.querySelectorAll('.city-outer').forEach(
-                (cityEntry: Element) => {
-                    const settlementType =
-                        cityEntry.getAttribute('settlement-type')
-                    const isTown = settlementType === 'Town'
-                    if (isTown) cityEntry.classList.toggle('hidden', !showTowns)
-                }
-            )
+    private toggleSettlementVisibilities() {
+        this.Root.querySelectorAll('.city-outer').forEach(
+            (cityEntry: Element) => {
+                const settlementType = cityEntry.getAttribute('settlement-type')
+                const hasFactory =
+                    cityEntry.getAttribute('has-factory') === 'true'
+                const isCity = settlementType !== 'Town'
+
+                const isSettlementSelectedByType =
+                    (isCity && this.showingCities) ||
+                    (!isCity && this.showingTowns)
+
+                const isSettlementVisible = this.showingOnlyFactories
+                    ? isSettlementSelectedByType && hasFactory
+                    : isSettlementSelectedByType
+
+                cityEntry.classList.toggle('hidden', !isSettlementVisible)
+            }
+        )
+    }
+
+    private setupFactoryFilter() {
+        this.onShowFactoriesChanged = (
+            event: CustomEvent<{ value: boolean }>
+        ) => {
+            this.showingOnlyFactories = event.detail.value
+            this.toggleSettlementVisibilities()
         }
+
+        const showFactories = MustGetElement('.show-factories', this.Root)
+        showFactories.removeEventListener(
+            'component-value-changed',
+            this.screen.onShowFactoriesChanged
+        )
+        showFactories.setAttribute('selected', 'false')
+        ;(showFactories.previousSibling as HTMLElement).setAttribute(
+            'data-l10n-id',
+            'LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES'
+        )
+        showFactories.addEventListener(
+            'component-value-changed',
+            this.onShowFactoriesChanged
+        )
+    }
+
+    private setupCityFilter() {
         this.onShowCitiesChanged = (event: CustomEvent<{ value: boolean }>) => {
-            const showCities = event.detail.value
-            this.Root.querySelectorAll('.city-outer').forEach(
-                (cityEntry: Element) => {
-                    const settlementType =
-                        cityEntry.getAttribute('settlement-type')
-                    const isCity = settlementType !== 'Town'
-                    if (isCity)
-                        cityEntry.classList.toggle('hidden', !showCities)
-                }
-            )
+            this.showingCities = event.detail.value
+            this.toggleSettlementVisibilities()
         }
 
         const showCities = MustGetElement('.show-cities', this.Root)
@@ -92,6 +124,13 @@ class ScreenResourceAllocationDecorator {
             'component-value-changed',
             this.onShowCitiesChanged
         )
+    }
+
+    private setupTownFilter() {
+        this.onShowTownsChanged = (event: CustomEvent<{ value: boolean }>) => {
+            this.showingTowns = event.detail.value
+            this.toggleSettlementVisibilities()
+        }
 
         const showTownsContainer = document.createElement('div')
         showTownsContainer.className = 'relative flex items-end mr-3'
@@ -116,6 +155,8 @@ class ScreenResourceAllocationDecorator {
             '.city-filter-container',
             this.Root
         )
+
+        const showCities = MustGetElement('.show-cities', this.Root)
         cityFilterContainer.insertBefore(
             showTownsContainer,
             showCities.parentNode.nextSibling

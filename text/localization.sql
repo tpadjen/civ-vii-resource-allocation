@@ -27,6 +27,20 @@
 			('LOC_UI_RESOURCE_ALLOCATION_UNASSIGN_ALL',		'pt_BR',	"Desatribuir Todos Os Recursos"),
 			('LOC_UI_RESOURCE_ALLOCATION_UNASSIGN_ALL',		'ru_RU',	"Отменить Назначение Всех Ресурсов"),
 			('LOC_UI_RESOURCE_ALLOCATION_UNASSIGN_ALL',		'zh_Hans_CN',	"取消分配所有资源"),
-			('LOC_UI_RESOURCE_ALLOCATION_UNASSIGN_ALL',		'zh_Hant_HK',	"取消分配所有資源");
+			('LOC_UI_RESOURCE_ALLOCATION_UNASSIGN_ALL',		'zh_Hant_HK',	"取消分配所有資源"),
+
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'en_US',	"With Factories Only?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'de_DE',	"Nur mit Fabriken?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'es_ES',	"Solo con Fábricas?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'fr_FR',	"Avec Seulement Les Fabricants?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'it_IT',	"Solo con Fabbriche?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'ja_JP',	"工場のみを表示"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'ko_KR',	"공장만 표시"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'pl_PL',	"Tylko z Fabrykami?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'pt_BR',	"Apenas com Fábricas?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'ru_RU',	"Только с Фабриками?"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'zh_Hans_CN',	"只显示工厂？"),
+			('LOC_UI_RESOURCE_ALLOCATION_SHOW_ONLY_FACTORIES',		'zh_Hant_HK',	"只顯示工廠？");
+			
 --========================================================================================================================
 --========================================================================================================================

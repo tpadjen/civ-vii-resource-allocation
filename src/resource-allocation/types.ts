@@ -15,6 +15,8 @@ export const ExtendedResourceAllocation =
 
 export type ScreenResourceAllocationType = typeof Component & {
     onShowTownsChanged: (event: any) => void
+    onShowCitiesChanged: (event: any) => void
+    onShowFactoriesChanged: (event: any) => void
     updateCityEntriesDisabledState: () => void
     updateAvailableResourceColDisabledState: () => void
     updateAllUnassignActivatable: () => void
