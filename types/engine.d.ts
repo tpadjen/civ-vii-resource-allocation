@@ -52,6 +52,33 @@ declare var PlayerOperationTypes: {
     ASSIGN_RESOURCE: string
 }
 
+declare type PlayerCities = {
+    getCityIds: () => ComponentID[]
+}
+
+declare type City = {
+    id: ComponentID
+    isDistantLands: boolean
+}
+
+declare var Cities: {
+    get: (id: ComponentID) => City | undefined
+}
+
+declare type PlayerId = number
+
+declare var Players: {
+    get: (id: PlayerId) => Player | undefined
+}
+
+declare type Player = {
+    Cities: PlayerCities
+}
+
+declare type PlayerLibrary = {
+    Cities: PlayerCities
+}
+
 type GameEvent =
     | 'AccountUnlinked'
     | 'AccountUpdated'

@@ -44,6 +44,7 @@ class ScreenResourceAllocationDecorator {
         this.setupTownFilter()
         this.setupFactoryFilter()
         this.removeSettlementTypeNames()
+        this.addDistantLandsIcons()
         this.setupQuickResourceUnassignment()
         this.addUnassignAllButton()
         this.enhanceFactorySlots()
@@ -172,6 +173,73 @@ class ScreenResourceAllocationDecorator {
             (settlementTypeName: HTMLElement) =>
                 (settlementTypeName.style.visibility = 'hidden')
         )
+    }
+
+    private getDistantLandsCityIds() {
+        const localPlayerID: PlayerId = GameContext.localPlayerID
+        const localPlayer: PlayerLibrary | null = Players.get(localPlayerID)
+        if (!localPlayer) {
+            console.error(
+                `model-resource-allocation: Failed to retrieve PlayerLibrary for Player ${localPlayerID}`
+            )
+            return
+        }
+        const playerCities: PlayerCities | undefined = localPlayer.Cities
+        if (!playerCities) {
+            console.error(
+                `model-resource-allocation: Failed to retrieve Cities for Player ${localPlayerID}`
+            )
+            return
+        }
+
+        const distantLandsCityIds = playerCities
+            .getCityIds()
+            .filter((cityID) => Cities.get(cityID)?.isDistantLands)
+            .map((cityID) => cityID.id)
+
+        return distantLandsCityIds
+    }
+
+    addDistantLandsIcons() {
+        // Wait for the city IDs to be data bound
+        const waitForCityId: Promise<void> = new Promise((resolve) => {
+            const waitForCityIdHandler = setInterval(() => {
+                const cityEntries = this.Root.querySelectorAll('.city-entry')
+                const cityID = cityEntries[0].getAttribute('data-city-id')
+                if (cityID) {
+                    clearInterval(waitForCityIdHandler)
+                    resolve()
+                }
+            }, 20)
+        })
+
+        const distantLandsCityIds = this.getDistantLandsCityIds()
+        const distantLandsIcon = `<div style="padding-left: 10px;">
+                                    <fxs-icon class="size-8 bg-no-repeat bg-center" data-icon-id="NOTIFICATION_DISCOVER_CONTINENT"></fxs-icon>
+                                  </div>`
+
+        waitForCityId.then(() => {
+            this.Root.querySelectorAll('.city-entry').forEach(
+                (cityEntry: Element) => {
+                    const settlementName = MustGetElement(
+                        '.settlement-name-text',
+                        cityEntry as HTMLElement
+                    )
+
+                    const cityID = cityEntry.getAttribute('data-city-id')
+
+                    const isDistantLands = distantLandsCityIds.some(
+                        (id) => id == cityID
+                    )
+                    if (isDistantLands) {
+                        settlementName.insertAdjacentHTML(
+                            'afterend',
+                            distantLandsIcon
+                        )
+                    }
+                }
+            )
+        })
     }
 
     setupQuickResourceUnassignment() {
