@@ -8,6 +8,9 @@ type ExtendedResourceAllocationType = typeof ResourceAllocation & {
         cityID: string,
         resourceValue: string
     ) => void
+    hasFactories: boolean
+    hasDistantLandsSettlements: boolean
+    isDistantLandsCity: (cityID: string) => boolean
 }
 
 export const ExtendedResourceAllocation =

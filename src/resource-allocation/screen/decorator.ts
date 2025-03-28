@@ -19,10 +19,12 @@ class ScreenResourceAllocationDecorator {
     private onShowTownsChanged: (event: any) => void
     private onShowCitiesChanged: (event: any) => void
     private onShowFactoriesChanged: (event: any) => void
+    private onShowDistantLandsChanged: (event: any) => void
     Root: ComponentRoot<Component>
     showingTowns: boolean = true
     showingCities: boolean = true
     showingOnlyFactories: boolean = false
+    showingOnlyDistantLands: boolean = false
 
     constructor(val: ScreenResourceAllocationType) {
         this.screen = val
@@ -43,6 +45,8 @@ class ScreenResourceAllocationDecorator {
         this.setupCityFilter()
         this.setupTownFilter()
         this.setupFactoryFilter()
+        this.setupDistantLandsFilter()
+        this.addFilterCategoryLabels()
         this.removeSettlementTypeNames()
         this.addDistantLandsIcons()
         this.setupQuickResourceUnassignment()
@@ -63,21 +67,29 @@ class ScreenResourceAllocationDecorator {
 
     private toggleSettlementVisibilities() {
         this.Root.querySelectorAll('.city-outer').forEach(
-            (cityEntry: Element) => {
-                const settlementType = cityEntry.getAttribute('settlement-type')
-                const hasFactory =
-                    cityEntry.getAttribute('has-factory') === 'true'
+            (cityOuter: Element) => {
+                const settlementType = cityOuter.getAttribute('settlement-type')
                 const isCity = settlementType !== 'Town'
+                const hasFactory =
+                    cityOuter.getAttribute('has-factory') === 'true'
+                const cityEntry = cityOuter.querySelector('.city-entry')
+                const cityId = cityEntry?.getAttribute('data-city-id')
+                const isDistantLands =
+                    ExtendedResourceAllocation.isDistantLandsCity(cityId)
 
                 const isSettlementSelectedByType =
                     (isCity && this.showingCities) ||
                     (!isCity && this.showingTowns)
 
-                const isSettlementVisible = this.showingOnlyFactories
+                let isSettlementVisible = this.showingOnlyFactories
                     ? isSettlementSelectedByType && hasFactory
                     : isSettlementSelectedByType
 
-                cityEntry.classList.toggle('hidden', !isSettlementVisible)
+                isSettlementVisible = this.showingOnlyDistantLands
+                    ? isSettlementVisible && isDistantLands
+                    : isSettlementVisible
+
+                cityOuter.classList.toggle('hidden', !isSettlementVisible)
             }
         )
     }
@@ -103,6 +115,50 @@ class ScreenResourceAllocationDecorator {
         showFactories.addEventListener(
             'component-value-changed',
             this.onShowFactoriesChanged
+        )
+    }
+
+    private setupDistantLandsFilter() {
+        this.onShowDistantLandsChanged = (
+            event: CustomEvent<{ value: boolean }>
+        ) => {
+            this.showingOnlyDistantLands = event.detail.value
+            this.toggleSettlementVisibilities()
+        }
+
+        const showDistantLandsContainer = document.createElement('div')
+        showDistantLandsContainer.className =
+            'show-distant-lands relative flex items-end mr-3'
+        const showDistantLandsLabel = document.createElement('div')
+        showDistantLandsLabel.className = 'font-body text-xs mb-1'
+        showDistantLandsLabel.setAttribute(
+            'data-l10n-id',
+            'LOC_UI_RESOURCE_ALLOCATION_SHOW_DISTANT_LANDS'
+        )
+        showDistantLandsLabel.setAttribute('selected', 'false')
+        const checkbox = document.createElement('fxs-checkbox')
+        checkbox.className = 'show-distant-lands'
+        checkbox.setAttribute('selected', 'false')
+        checkbox.addEventListener(
+            'component-value-changed',
+            this.onShowDistantLandsChanged
+        )
+        showDistantLandsContainer.appendChild(showDistantLandsLabel)
+        showDistantLandsContainer.appendChild(checkbox)
+
+        const cityFilterContainer = MustGetElement(
+            '.city-filter-container',
+            this.Root
+        )
+
+        if (!ExtendedResourceAllocation.hasDistantLandsSettlements) {
+            showDistantLandsContainer.classList.add('hidden')
+        }
+
+        const showFactories = MustGetElement('.show-factories', this.Root)
+        cityFilterContainer.insertBefore(
+            showDistantLandsContainer,
+            showFactories.parentNode
         )
     }
 
@@ -164,6 +220,82 @@ class ScreenResourceAllocationDecorator {
         )
     }
 
+    private createFilterCategoryLabel(locId: string) {
+        const label = document.createElement('p')
+        label.className =
+            'city-column-header flex justify-start font-title text-base uppercase text-secondary relative'
+        label.style.paddingLeft = '8px'
+        label.style.paddingRight = '12px'
+        label.style.top = '-4px'
+        label.textContent = `${Locale.compose(locId)}:`
+        return label
+    }
+
+    private createSeparator() {
+        const separator = document.createElement('div')
+        separator.textContent = '|'
+        separator.className = 'text-xl font-title text-secondary relative'
+        separator.style.paddingLeft = '6px'
+        separator.style.paddingRight = '6px'
+        separator.style.top = '2px'
+        return separator
+    }
+
+    private addFilterCategoryLabels() {
+        const showYields = MustGetElement('.show-yields', this.Root)
+        const showCities = MustGetElement('.show-cities', this.Root)
+        const showTowns = MustGetElement('.show-towns', this.Root)
+        const showFactories = MustGetElement('.show-factories', this.Root)
+
+        ;(showYields.previousSibling as HTMLElement).setAttribute(
+            'data-l10n-id',
+            'LOC_RESOURCE_FILTER_YIELDS'
+        )
+        ;(showCities.previousSibling as HTMLElement).setAttribute(
+            'data-l10n-id',
+            'LOC_UI_SETTLEMENT_TAB_BAR_CITIES'
+        )
+        ;(showTowns.previousSibling as HTMLElement).setAttribute(
+            'data-l10n-id',
+            'LOC_UI_SETTLEMENT_TAB_BAR_TOWNS'
+        )
+
+        const uiLabel = this.createFilterCategoryLabel(
+            'LOC_UI_RESOURCE_ALLOCATION_UI_LABEL'
+        )
+        showYields.parentElement?.insertAdjacentElement('beforebegin', uiLabel)
+
+        const showLabel = this.createFilterCategoryLabel(
+            'LOC_RESOURCE_FILTER_SHOW'
+        )
+        showCities.parentElement?.insertAdjacentElement(
+            'beforebegin',
+            this.createSeparator()
+        )
+        showCities.parentElement?.insertAdjacentElement(
+            'beforebegin',
+            showLabel
+        )
+
+        const filterLabel = this.createFilterCategoryLabel(
+            'LOC_ADVANCED_START_FILTER'
+        )
+
+        const separator = this.createSeparator()
+        if (
+            !(
+                ExtendedResourceAllocation.hasDistantLandsSettlements ||
+                ExtendedResourceAllocation.hasFactories
+            )
+        ) {
+            filterLabel.classList.add('hidden')
+            separator.classList.add('hidden')
+        }
+
+        showTowns.parentElement?.insertAdjacentElement('afterend', filterLabel)
+        showTowns.parentElement?.insertAdjacentElement('afterend', separator)
+    }
+
     removeSettlementTypeNames() {
         const settlementTypeNames = MustGetElements(
             '.settlement-type-text',
@@ -173,31 +305,6 @@ class ScreenResourceAllocationDecorator {
             (settlementTypeName: HTMLElement) =>
                 (settlementTypeName.style.visibility = 'hidden')
         )
-    }
-
-    private getDistantLandsCityIds() {
-        const localPlayerID: PlayerId = GameContext.localPlayerID
-        const localPlayer: PlayerLibrary | null = Players.get(localPlayerID)
-        if (!localPlayer) {
-            console.error(
-                `model-resource-allocation: Failed to retrieve PlayerLibrary for Player ${localPlayerID}`
-            )
-            return
-        }
-        const playerCities: PlayerCities | undefined = localPlayer.Cities
-        if (!playerCities) {
-            console.error(
-                `model-resource-allocation: Failed to retrieve Cities for Player ${localPlayerID}`
-            )
-            return
-        }
-
-        const distantLandsCityIds = playerCities
-            .getCityIds()
-            .filter((cityID) => Cities.get(cityID)?.isDistantLands)
-            .map((cityID) => cityID.id)
-
-        return distantLandsCityIds
     }
 
     addDistantLandsIcons() {
@@ -213,7 +320,6 @@ class ScreenResourceAllocationDecorator {
             }, 20)
         })
 
-        const distantLandsCityIds = this.getDistantLandsCityIds()
         const distantLandsIcon = `<div style="padding-left: 10px;">
                                     <fxs-icon class="size-8 bg-no-repeat bg-center" data-icon-id="NOTIFICATION_DISCOVER_CONTINENT"></fxs-icon>
                                   </div>`
@@ -228,9 +334,8 @@ class ScreenResourceAllocationDecorator {
 
                     const cityID = cityEntry.getAttribute('data-city-id')
 
-                    const isDistantLands = distantLandsCityIds.some(
-                        (id) => id == cityID
-                    )
+                    const isDistantLands =
+                        ExtendedResourceAllocation.isDistantLandsCity(cityID)
                     if (isDistantLands) {
                         settlementName.insertAdjacentHTML(
                             'afterend',

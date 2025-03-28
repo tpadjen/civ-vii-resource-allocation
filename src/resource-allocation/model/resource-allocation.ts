@@ -142,4 +142,56 @@ export function improveResourceAllocation() {
             this.unassignResource(resource.value)
         )
     }
+
+    Object.defineProperty(proto, 'hasFactories', {
+        get: function hasFactories() {
+            return this.availableCities.some(
+                (city: CityEntry) => city.hasFactory
+            )
+        },
+    })
+
+    Object.defineProperty(proto, 'playerCities', {
+        get: function playerCities() {
+            if (this._playerCities) return this._playerCities
+
+            const localPlayerID: PlayerId = GameContext.localPlayerID
+            const localPlayer: PlayerLibrary | null = Players.get(localPlayerID)
+            if (!localPlayer) {
+                console.error(
+                    `model-resource-allocation: Failed to retrieve PlayerLibrary for Player ${localPlayerID}`
+                )
+                return undefined
+            }
+            const playerCities: PlayerCities | undefined = localPlayer.Cities
+            if (!playerCities) {
+                console.error(
+                    `model-resource-allocation: Failed to retrieve Cities for Player ${localPlayerID}`
+                )
+                return undefined
+            }
+
+            this._playerCities = playerCities
+            return playerCities
+        },
+    })
+
+    Object.defineProperty(proto, 'distantLandsCityIds', {
+        get: function distantLandsCityIds() {
+            return this.playerCities
+                .getCityIds()
+                .filter((cityID: CityID) => Cities.get(cityID)?.isDistantLands)
+                .map((cityID: CityID) => cityID.id)
+        },
+    })
+
+    Object.defineProperty(proto, 'hasDistantLandsSettlements', {
+        get: function hasDistantLandsSettlements() {
+            return this.distantLandsCityIds.length > 0
+        },
+    })
+
+    proto.isDistantLandsCity = function (cityID: string) {
+        return this.distantLandsCityIds.some((id: string) => id == cityID)
+    }
 }
