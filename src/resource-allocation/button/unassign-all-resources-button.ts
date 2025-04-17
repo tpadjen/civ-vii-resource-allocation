@@ -1,5 +1,5 @@
-import { ExtendedResourceAllocation } from 'resource-allocation/types.js'
-import { AllResourcesUnassignedEvent } from '../model/events.js'
+import { AllResourcesUnassignedEvent } from '../model/events'
+import { ExtendedResourceAllocation } from '../types'
 import ActionHandler from '/core/ui/input/action-handler.js'
 import Databind from '/core/ui/utilities/utilities-core-databinding.js'
 import { MustGetElement } from '/core/ui/utilities/utilities-dom.js'

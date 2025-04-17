@@ -3,68 +3,65 @@ import chokidar from 'chokidar'
 import pc from 'picocolors'
 import { showNotification } from '../editor/notifications.js'
 
-// const { debounce } = _;
-
-// Run an initial build to ensure dependencies are generated
-console.log(pc.blue('Preparing initial build...'))
-const initialBuild = spawn('bun', ['before:bundle'], {
-    stdio: 'inherit',
-    shell: true,
-})
-
-initialBuild.on('exit', (code) => {
-    if (code !== 0) {
-        const message = `Build preparation failed with code: ${code}`
-        console.error(pc.red(message))
-        showNotification(message)
-        process.exit(code)
-    }
-
-    startWatchProcess()
-})
+startWatchProcess()
 
 function startWatchProcess() {
-    // Start rollup in watch mode
-    let rollup: ChildProcess | null = null
+    let vite: ChildProcess | null = null
 
-    function startRollup() {
-        console.log(pc.blue('Starting Rollup in watch mode...'))
-        rollup = spawn('bun', ['bundle:rollup:watch'], {
-            stdio: 'inherit',
-            shell: true,
+    function startVite() {
+        console.log(pc.blue('Starting Vite in watch mode...'))
+        vite = spawn(
+            'bun',
+            ['rimraf build && vite build --config vite.config.ts --watch'],
+            {
+                stdio: ['inherit', 'pipe', 'pipe'],
+                shell: true,
+            }
+        )
+
+        let output = ''
+        vite.stdout?.on('data', (data) => {
+            const message = data.toString()
+            output += message
+            console.log(message)
+            if (message.includes('built in')) {
+                updateModinfo()
+            }
         })
 
-        rollup.on('error', (error) => {
+        vite.stderr?.on('data', (data) => {
+            console.error(data.toString())
+        })
+
+        vite.on('error', (error) => {
             console.error(
-                pc.red(`Rollup process encountered an error: ${error.message}`)
+                pc.red(`Vite process encountered an error: ${error.message}`)
             )
-            showNotification(`Rollup error: ${error.message}`)
+            showNotification(`Vite error: ${error.message}`)
         })
 
-        rollup.on('exit', (code) => {
-            console.log(pc.yellow(`Rollup process exited with code: ${code}`))
+        vite.on('exit', (code) => {
+            console.log(pc.yellow(`Vite process exited with code: ${code}`))
             if (code !== 0) {
-                showNotification(`Rollup process exited with code: ${code}`)
-                // Restart Rollup if it exits unexpectedly
-                restartRollup()
+                showNotification(`Vite process exited with code: ${code}`)
+                restartVite()
             }
         })
     }
 
-    startRollup()
-
-    // Create a version of the modinfo update function without debounce for testing
     const updateModinfo = () => {
         console.log(pc.blue('Build files changed, updating modinfo...'))
 
-        const update = spawn('bun', ['modinfo:update'], {
-            stdio: ['inherit', 'pipe', 'inherit'],
+        const update = spawn('bun', ['update:modinfo'], {
+            stdio: ['inherit', 'pipe', 'pipe'],
             shell: true,
         })
 
         let output = ''
-        update.stdout.on('data', (data) => {
-            output += data.toString()
+        update.stdout?.on('data', (data) => {
+            const message = data.toString()
+            output += message
+            console.log(message)
         })
 
         update.on('exit', (code) => {
@@ -80,26 +77,24 @@ function startWatchProcess() {
         })
     }
 
-    // Restart rollup when config changes
-    const restartRollup = () => {
-        console.log(pc.blue('mod.config.json changed, restarting rollup...'))
+    const restartVite = () => {
+        console.log(pc.blue('mod.config.json changed, restarting vite...'))
 
-        if (rollup && rollup.killed === false) {
-            rollup.kill()
+        if (vite && vite.killed === false) {
+            vite.kill()
 
             // Wait for the process to clean up
             setTimeout(() => {
                 console.log(
-                    pc.green('Rollup process stopped, starting a new one...')
+                    pc.green('Vite process stopped, starting a new one...')
                 )
-                startRollup()
+                startVite()
             }, 1000)
         } else {
-            startRollup()
+            startVite()
         }
     }
 
-    // Set up watchers
     const buildWatcher = chokidar.watch('build/**/*.js', {
         ignored: /(^|[\/\\])\../, // ignore dotfiles
         persistent: true,
@@ -119,19 +114,18 @@ function startWatchProcess() {
         },
     })
 
-    // Handle build file changes
     buildWatcher
         .on('add', (path) => {
-            console.log(pc.gray(`Build file ${path} has been added`))
             updateModinfo()
         })
         .on('change', (path) => {
-            console.log(pc.gray(`Build file ${path} has been changed`))
             updateModinfo()
         })
         .on('unlink', (path) => {
-            console.log(pc.gray(`Build file ${path} has been removed`))
             updateModinfo()
+        })
+        .on('ready', () => {
+            startVite()
         })
         .on('error', (error: any) => {
             const message = `Build watcher error: ${error.message}`
@@ -139,13 +133,12 @@ function startWatchProcess() {
             showNotification(message)
         })
 
-    // Handle config file changes
     configWatcher
         .on('change', () => {
             console.log(
                 pc.blue('mod.config.json changed, triggering rollup restart...')
             )
-            restartRollup()
+            restartVite()
         })
         .on('error', (error: any) => {
             const message = `Config watcher error: ${error.message}`
@@ -153,18 +146,16 @@ function startWatchProcess() {
             showNotification(message)
         })
 
-    // Handle process termination
     process.on('SIGINT', () => {
         console.log(pc.yellow('\nStopping watchers...'))
         buildWatcher.close()
         configWatcher.close()
-        if (rollup && rollup.killed === false) {
-            rollup.kill()
+        if (vite && vite.killed === false) {
+            vite.kill()
         }
         process.exit(0)
     })
 
-    // Handle uncaught exceptions
     process.on('uncaughtException', (error) => {
         const message = `Uncaught exception: ${error.message}`
         console.error(pc.red(message))
